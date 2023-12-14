@@ -1,0 +1,89 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	
++++ b/main.py	
+@@ -46,38 +46,58 @@
+         self.user_answer = Entry
+ 
+     def load_screen(self):
++        #set the two operands to random numbers 0-9
+         self.op1 = random.randint(0, 9)
+         self.op2 = random.randint(0, 9)
+-        print('check1')
++
++        #creates variable that will allow the displayed equation to change after user
++        #enters their answer
+         self.operands = StringVar()
+-        self.operands.set(f'  {self.op1}\n + {self.op2}\n--------')
++        self.operands.set(f'  {self.op1}\n + {self.op2}\n--------')#how equation will be formatted
++
++        #creates frame to hold widgets
+         self.addition_screen_frame = Frame(main_window)
+         self.addition_screen_frame.pack()
++
++        #creates label that will display the equation
+         self.equation = Label(self.addition_screen_frame, textvariable=self.operands)
+         self.equation.pack()
++
++        #creates entry box that will take the users answer when submit button is pressed
+         self.user_answer = Entry(self.addition_screen_frame, width=25)
+         self.user_answer.pack()
++
++        #when button is pressed, calls (get answer function) which checks if submitted answer is corrected and keeps track of score
+         self.submit_btn = Button(self.addition_screen_frame, text='Enter', width=15, command=lambda : self.get_answer(self.operands))
+         self.submit_btn.pack()
+ 
++    #checks users answer and ends when x questions have been answered
+     def get_answer(self,operands):
+-        global counter
+-        global correct
+-        global wrong
+-        ansr = int(self.user_answer.get())
++        global counter #keeps track of answered questions
++        global correct #keeps track of correct answers
++        global wrong   #keeps track of wrong answers
++
++        #gets user's answer from entry-box
++        user_answer = int(self.user_answer.get())
++
++        #clears the entry box
+         self.user_answer.delete(0, END)
+-        cor_answer = self.op1 + self.op2
+-        if ansr == int(cor_answer):
+-            print('Correct')
++
++        #checks if user's answer is correct and updates score
++        correct_answer = self.op1 + self.op2
++        if user_answer == correct_answer:
+             correct+=1
+         else:
+             wrong+=1
+ 
++        #gets new set of numbers for equation and updates displayed label
+         self.op1 = random.randint(0,9)
+         self.op2 = random.randint(0,9)
+         operands.set(f'  {self.op1}\n + {self.op2}\n--------')
+-        print(ansr)
+-        print(cor_answer)
++
++        #once user has attemted x equations, close the addition screen
++        #then display how many answers they got correct and how many were wrong
++        #reset score and press continue button to be taken back to option screen
+         counter+=1
+         if counter == 3:
+             self.close_screen()
+@@ -87,9 +107,7 @@
+             counter = 0
+             wrong = 0
+             correct = 0
+-            Button(score_frame,text='continue', command=lambda : [self.close_score(score_frame), start.load_screen(option)]).pack()
+-
+-
++            Button(score_frame,text='continue', command=lambda : [self.close_score(score_frame), option.load_screen()]).pack()
+ 
+     def close_screen(self):
+         self.addition_screen_frame.pack_forget()
