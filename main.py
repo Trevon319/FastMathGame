@@ -40,10 +40,10 @@ def countdown():
 
 class Addition:
     def __int__(self):
-        self.screen = Frame
+        self.addition_screen_frame = Frame
         self.equation = Label
         self.submit_btn = Button
-        self.user_answr = Entry
+        self.user_answer = Entry
 
     def load_screen(self):
         self.op1 = random.randint(0, 9)
@@ -51,21 +51,21 @@ class Addition:
         print('check1')
         self.operands = StringVar()
         self.operands.set(f'  {self.op1}\n + {self.op2}\n--------')
-        self.screen = Frame(main_window)
-        self.screen.pack()
-        self.equation = Label(self.screen,textvariable=self.operands)
+        self.addition_screen_frame = Frame(main_window)
+        self.addition_screen_frame.pack()
+        self.equation = Label(self.addition_screen_frame, textvariable=self.operands)
         self.equation.pack()
-        self.user_answr = Entry(self.screen,width=25)
-        self.user_answr.pack()
-        self.submit_btn = Button(self.screen,text='Enter',width=15,command=lambda : self.get_answer(self.operands))
+        self.user_answer = Entry(self.addition_screen_frame, width=25)
+        self.user_answer.pack()
+        self.submit_btn = Button(self.addition_screen_frame, text='Enter', width=15, command=lambda : self.get_answer(self.operands))
         self.submit_btn.pack()
 
     def get_answer(self,operands):
         global counter
         global correct
         global wrong
-        ansr = int(self.user_answr.get())
-        self.user_answr.delete(0, END)
+        ansr = int(self.user_answer.get())
+        self.user_answer.delete(0, END)
         cor_answer = self.op1 + self.op2
         if ansr == int(cor_answer):
             print('Correct')
@@ -92,25 +92,15 @@ class Addition:
 
 
     def close_screen(self):
-        self.screen.pack_forget()
+        self.addition_screen_frame.pack_forget()
 
     def close_score(self,screen):
         screen.pack_forget()
 
 
-
-
-
-
-
-
-
-
-
-
-
-def button_pressed(selected):
-
+#function takes what the user selected in the option menu as parameter
+#Then loads the game mode selected
+def option_button_pressed(selected):
     if selected.get() == 'Addition':
         play = Addition()
         play.load_screen()
@@ -118,6 +108,7 @@ def button_pressed(selected):
 
 class startScreen:
     def __int__(self):
+        #get game logo
         global logo
         self.start_frame = Frame
         self.logo_frame = Label
@@ -125,13 +116,20 @@ class startScreen:
         self.start_button = Button
 
     def load_screen(self, option_menu):
-
+        #create frame to hold all starting screen widgets
         self.start_frame = Frame(main_window, bg='#fffce8')
         self.start_frame.pack()
+
+        #create widget to hold the logo
         self.logo_frame = Label(self.start_frame, image=logo,bg='#fffce8')
         self.logo_frame.pack()
+
+        #button to exit the game
         self.quit_button = Button(self.start_frame,text="QUIT", command=main_window.destroy).pack()
+
+        #when start button is pressed, first close the starting screen frame, then load the option menu
         self.start_button = Button(self.start_frame,text="START PLAYING",command=lambda : [self.close_screen(), option_menu.load_screen()]).pack()
+
 
     def close_screen(self):
         self.start_frame.pack_forget()
@@ -139,21 +137,31 @@ class startScreen:
 
 class optionScreen:
     def __int__(self):
-        self.option_frame = Frame
+        self.option_menu_frame = Frame
         self.menu = OptionMenu
-        self.select = Button
+        self.select_mode = Button
 
     def load_screen(self):
-        self.option_frame = Frame(main_window,bg='#fffce8',pady=300)
-        self.option_frame.pack()
-        options = ['Addition', 'Subtraction', 'Multiplication', 'Division']
+        #create frame to hold option menu widgets
+        self.option_menu_frame = Frame(main_window, bg='#fffce8', pady=300)
+        self.option_menu_frame.pack()
+
+        #list of game possible game modes
+        options = ('Addition', 'Subtraction', 'Multiplication', 'Division')
+
+        #variable to hold game mode options
         option_list = StringVar()
         option_list.set(options[0])
-        self.menu = OptionMenu(self.option_frame, option_list, *options)
+
+        #creates drop menu with game modes
+        self.menu = OptionMenu(self.option_menu_frame, option_list, *options)
         self.menu.configure(width=100,height=5,bg='#d65c68')
         self.menu.pack()
 
-        self.select =Button(self.option_frame, text='CONTINUE',width=50, command=lambda: [self.close_screen(self.option_frame), countdown(), button_pressed(option_list)]).pack()
+        #When continue button is pressed, 1.close out the option frame
+        #2. call the coutdown function
+        #3. load the game mode that the user selected
+        self.select_mode =Button(self.option_menu_frame, text='CONTINUE', width=50, command=lambda: [self.close_screen(self.option_menu_frame), countdown(), option_button_pressed(option_list)]).pack()
 
     def close_screen(self,frame):
         frame.pack_forget()
@@ -165,9 +173,13 @@ class optionScreen:
 
 
 if __name__ == '__main__':
-
+    #create object that will load option screen
     option = optionScreen()
+
+    #create start screen
     start = startScreen()
+
+    #load the start screen which will open the option menu
     start.load_screen(option)
 
     main_window.mainloop()
