@@ -46,39 +46,61 @@ class Addition:
         self.user_answer = Entry
 
     def load_screen(self):
+        #create operators that will be random integers 0-9
         self.op1 = random.randint(0, 9)
         self.op2 = random.randint(0, 9)
-        print('check1')
+
+        #creates variable that will allow the displayed equation to
+        #change once the user enters their answer
         self.operands = StringVar()
-        self.operands.set(f'  {self.op1}\n + {self.op2}\n--------')
+        self.operands.set(f'  {self.op1}\n + {self.op2}\n--------')#how equation is formatted
+
+        #create frame to hold widgets
         self.addition_screen_frame = Frame(main_window)
         self.addition_screen_frame.pack()
+
+        #creates label to display the equation
         self.equation = Label(self.addition_screen_frame, textvariable=self.operands)
         self.equation.pack()
+
+        #creates entry box for the user to type an answer
         self.user_answer = Entry(self.addition_screen_frame, width=25)
         self.user_answer.pack()
+
+        #creates button that when pressed, calls the (get_answer)function, which checks the user answer and displays a new equation
         self.submit_btn = Button(self.addition_screen_frame, text='Enter', width=15, command=lambda : self.get_answer(self.operands))
         self.submit_btn.pack()
 
+#   Checks user answer
+    #updates score
+    #displays new equation
     def get_answer(self,operands):
-        global counter
-        global correct
-        global wrong
-        ansr = int(self.user_answer.get())
+        global counter #tracks number of answers attemted
+        global correct #tracks correct answers
+        global wrong   #tracks wrong answers
+
+        #gets user answer from entry box
+        user_answer = int(self.user_answer.get())
+
+        #clears the entry box
         self.user_answer.delete(0, END)
-        cor_answer = self.op1 + self.op2
-        if ansr == int(cor_answer):
-            print('Correct')
+
+        #checks if user's answer is correct and updates their score
+        correct_answer = self.op1 + self.op2
+        if user_answer == int(correct_answer):
             correct+=1
         else:
             wrong+=1
 
+        #gets new numbers to be displayed for next equation
         self.op1 = random.randint(0,9)
         self.op2 = random.randint(0,9)
         operands.set(f'  {self.op1}\n + {self.op2}\n--------')
-        print(ansr)
-        print(cor_answer)
         counter+=1
+
+        #ends game once x questions have been attempted
+        #then displays score
+        #continue button takes user back to option screen
         if counter == 3:
             self.close_screen()
             score_frame = Frame(main_window)
@@ -87,9 +109,7 @@ class Addition:
             counter = 0
             wrong = 0
             correct = 0
-            Button(score_frame,text='continue', command=lambda : [self.close_score(score_frame), start.load_screen(option)]).pack()
-
-
+            Button(score_frame,text='continue', command=lambda : [self.close_score(score_frame), option.load_screen()]).pack()
 
     def close_screen(self):
         self.addition_screen_frame.pack_forget()
